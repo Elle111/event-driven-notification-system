@@ -11,6 +11,7 @@
 
     <modules>
         <module>notification-api-service</module>
+        <module>notification-processor-service</module>
     </modules>
 
     <properties>

@@ -32,7 +32,7 @@ public class NotificationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<NotificationResponse> getNotification(@PathVariable Long id) {
+    public ResponseEntity<NotificationResponse> getNotification(@PathVariable("id") Long id) {
         Optional<NotificationResponse> notification = notificationService.getNotificationById(id);
         return notification.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -45,13 +45,13 @@ public class NotificationController {
     }
 
     @GetMapping("/recipient/{recipient}")
-    public ResponseEntity<List<NotificationResponse>> getNotificationsByRecipient(@PathVariable String recipient) {
+    public ResponseEntity<List<NotificationResponse>> getNotificationsByRecipient(@PathVariable("recipient") String recipient) {
         List<NotificationResponse> notifications = notificationService.getNotificationsByRecipient(recipient);
         return ResponseEntity.ok(notifications);
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<NotificationResponse>> getNotificationsByStatus(@PathVariable Notification.NotificationStatus status) {
+    public ResponseEntity<List<NotificationResponse>> getNotificationsByStatus(@PathVariable("status") Notification.NotificationStatus status) {
         List<NotificationResponse> notifications = notificationService.getNotificationsByStatus(status);
         return ResponseEntity.ok(notifications);
     }

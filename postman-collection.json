@@ -1,0 +1,268 @@
+{
+	"info": {
+		"_postman_id": "event-driven-notification-system",
+		"name": "Event-Driven Notification System",
+		"description": "Postman collection for testing the Event-Driven Notification System APIs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Notification API Service",
+			"item": [
+				{
+					"name": "Create Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"recipient\": \"test@example.com\",\n    \"message\": \"This is a test notification message\",\n    \"type\": \"EMAIL\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/notifications",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"notifications"
+							]
+						},
+						"description": "Create a new notification. This will save the notification to the database with PENDING status and publish a NotificationCreatedEvent to Kafka."
+					},
+					"response": []
+				},
+				{
+					"name": "Create SMS Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"recipient\": \"test@example.com\",\n    \"message\": \"This is a test SMS notification\",\n    \"type\": \"SMS\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/notifications",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"notifications"
+							]
+						},
+						"description": "Create a new SMS notification. SMS notifications have an 80% success rate in processing."
+					},
+					"response": []
+				},
+				{
+					"name": "Create PUSH Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"recipient\": \"test@example.com\",\n    \"message\": \"This is a test push notification\",\n    \"type\": \"PUSH\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/notifications",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"notifications"
+							]
+						},
+						"description": "Create a new PUSH notification. PUSH notifications have a 70% success rate in processing."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Notification by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/notifications/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"notifications",
+								"1"
+							]
+						},
+						"description": "Retrieve a specific notification by its ID. Replace '1' with the actual notification ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Notifications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/notifications",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"notifications"
+							]
+						},
+						"description": "Retrieve all notifications from the database."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Notifications by Recipient",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/notifications/recipient/test@example.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"notifications",
+								"recipient",
+								"test@example.com"
+							]
+						},
+						"description": "Retrieve all notifications for a specific recipient email address."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Notifications by Status - PENDING",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/notifications/status/PENDING",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"notifications",
+								"status",
+								"PENDING"
+							]
+						},
+						"description": "Retrieve all notifications with PENDING status."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Notifications by Status - SENT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/notifications/status/SENT",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"notifications",
+								"status",
+								"SENT"
+							]
+						},
+						"description": "Retrieve all notifications that have been successfully sent."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Notifications by Status - FAILED",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/notifications/status/FAILED",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"notifications",
+								"status",
+								"FAILED"
+							]
+						},
+						"description": "Retrieve all notifications that failed during processing."
+					},
+					"response": []
+				}
+			],
+			"description": "API endpoints for the Notification API Service running on port 8080"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

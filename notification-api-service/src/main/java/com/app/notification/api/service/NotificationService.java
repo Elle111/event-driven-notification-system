@@ -3,8 +3,12 @@ package com.app.notification.api.service;
 import com.app.notification.api.dto.NotificationRequest;
 import com.app.notification.api.dto.NotificationResponse;
 import com.app.notification.api.entity.Notification;
+import com.app.notification.api.event.NotificationCreatedEvent;
 import com.app.notification.api.repository.NotificationRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,11 +20,17 @@ import java.util.stream.Collectors;
 @Transactional
 public class NotificationService {
 
+    private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
+    private static final String NOTIFICATION_CREATED_TOPIC = "notification-created";
+
     private final NotificationRepository notificationRepository;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Autowired
-    public NotificationService(NotificationRepository notificationRepository) {
+    public NotificationService(NotificationRepository notificationRepository, 
+                              KafkaTemplate<String, Object> kafkaTemplate) {
         this.notificationRepository = notificationRepository;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     public NotificationResponse createNotification(NotificationRequest request) {
@@ -32,9 +42,29 @@ public class NotificationService {
         
         Notification savedNotification = notificationRepository.save(notification);
         
-        // TODO: Publish NotificationCreatedEvent to Kafka (will be implemented in next milestone)
+        // Publish NotificationCreatedEvent to Kafka
+        NotificationCreatedEvent event = new NotificationCreatedEvent(savedNotification);
+        publishNotificationCreatedEvent(event);
+        
+        logger.info("Created notification {} and published event", savedNotification.getId());
         
         return new NotificationResponse(savedNotification);
+    }
+
+    private void publishNotificationCreatedEvent(NotificationCreatedEvent event) {
+        try {
+            kafkaTemplate.send(NOTIFICATION_CREATED_TOPIC, event.getNotificationId().toString(), event)
+                .whenComplete((result, failure) -> {
+                    if (failure == null) {
+                        logger.info("Successfully published event for notification {}", event.getNotificationId());
+                    } else {
+                        logger.error("Failed to publish event for notification {}", event.getNotificationId(), failure);
+                    }
+                });
+        } catch (Exception e) {
+            logger.error("Error publishing event for notification {}", event.getNotificationId(), e);
+            // Continue processing even if Kafka publishing fails
+        }
     }
 
     @Transactional(readOnly = true)
